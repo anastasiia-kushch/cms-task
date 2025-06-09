@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import KeywordInput from '../KeywordInput/KeywordInput';
 import TOWNS from '../../data/towns';
+import DEFAULT_KEYWORDS from '../../data/keywords';
 
 const MIN_BID = 0.1;
 
@@ -14,12 +14,17 @@ function CampaignForm({ initialData, onSubmit, onCancel }) {
     town: '',
     radius: '',
   });
-
   const [errors, setErrors] = useState({});
+  const [keywordInput, setKeywordInput] = useState('');
 
   useEffect(() => {
     if (initialData) {
-      setForm(initialData);
+      setForm({
+        ...initialData,
+        keywords: Array.isArray(initialData.keywords)
+          ? initialData.keywords
+          : [],
+      });
     }
   }, [initialData]);
 
@@ -58,6 +63,31 @@ function CampaignForm({ initialData, onSubmit, onCancel }) {
     });
   };
 
+  const addKeyword = (value) => {
+    const trimmed = value.trim();
+    if (trimmed && !form.keywords.includes(trimmed)) {
+      setForm((prev) => ({
+        ...prev,
+        keywords: [...prev.keywords, trimmed],
+      }));
+    }
+    setKeywordInput('');
+  };
+
+  const handleKeywordKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addKeyword(keywordInput);
+    }
+  };
+
+  const handleKeywordDelete = (kw) => {
+    setForm((prev) => ({
+      ...prev,
+      keywords: prev.keywords.filter((k) => k !== kw),
+    }));
+  };
+
   return (
     <form onSubmit={handleSubmit} className="campaign-form">
       <h2>{initialData ? 'Edit Campaign' : 'New Campaign'}</h2>
@@ -73,13 +103,33 @@ function CampaignForm({ initialData, onSubmit, onCancel }) {
         {errors.name && <span className="error">{errors.name}</span>}
       </label>
 
-      <KeywordInput
-        selectedKeywords={form.keywords}
-        setSelectedKeywords={(newKeywords) =>
-          setForm((prev) => ({ ...prev, keywords: newKeywords }))
-        }
-        error={errors.keywords}
-      />
+      <label>
+        Keywords:
+        <input
+          list="keywords"
+          value={keywordInput}
+          onChange={(e) => setKeywordInput(e.target.value)}
+          onBlur={(e) => addKeyword(e.target.value)}
+          onKeyDown={handleKeywordKeyDown}
+          placeholder="Add or select keyword"
+        />
+        <datalist id="keywords">
+          {DEFAULT_KEYWORDS.map((kw) => (
+            <option key={kw} value={kw} />
+          ))}
+        </datalist>
+        <div className="keyword-list">
+          {form.keywords.map((kw) => (
+            <span key={kw} className="keyword-chip">
+              {kw}
+              <button type="button" onClick={() => handleKeywordDelete(kw)}>
+                ×
+              </button>
+            </span>
+          ))}
+        </div>
+        {errors.keywords && <span className="error">{errors.keywords}</span>}
+      </label>
 
       <label>
         Bid amount:

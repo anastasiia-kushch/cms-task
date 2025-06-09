@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react';
 import CampaignForm from './components/CampaignForm/CampaignForm';
 import CampaignList from './components/CampaignList/CampaignList';
+import {
+  getCampaigns,
+  addCampaign,
+  updateCampaign,
+  deleteCampaign,
+} from './api/api';
 
 function App() {
   const [campaigns, setCampaigns] = useState([]);
@@ -8,15 +14,15 @@ function App() {
   const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:3001/campaigns')
-      .then((res) => {
-        if (!res.ok) throw new Error('Failed to fetch campaigns');
-        return res.json();
-      })
-      .then((data) => setCampaigns(data))
-      .catch((error) => {
-        console.error(error);
-      });
+    const fetchCampaigns = async () => {
+      try {
+        const data = await getCampaigns();
+        setCampaigns(data);
+      } catch (error) {
+        console.error('Error fetching campaigns:', error);
+      }
+    };
+    fetchCampaigns();
   }, []);
 
   const handleEditClick = (campaign) => {
@@ -24,19 +30,35 @@ function App() {
     setShowForm(true);
   };
 
-  const handleAddCampaign = (newCampaign) => {
-    setCampaigns([...campaigns, { id: Date.now(), ...newCampaign }]);
+  const handleAddCampaign = async (newCampaign) => {
+    try {
+      const created = await addCampaign(newCampaign);
+      setCampaigns([...campaigns, created]);
+    } catch (error) {
+      console.error('Error adding campaign:', error);
+    }
   };
 
-  const handleUpdateCampaign = (updatedCampaign) => {
-    setCampaigns((prev) =>
-      prev.map((c) => (c.id === updatedCampaign.id ? updatedCampaign : c))
-    );
+  const handleUpdateCampaign = async (updatedCampaign) => {
+    try {
+      const result = await updateCampaign(updatedCampaign);
+      setCampaigns((prev) =>
+        prev.map((c) => (c.id === result.id ? result : c))
+      );
+    } catch (error) {
+      console.error('Error updating campaign:', error);
+    }
   };
 
-  const handleDeleteCampaign = (id) => {
-    setCampaigns(campaigns.filter((c) => c.id !== id));
+  const handleDeleteCampaign = async (id) => {
+    try {
+      await deleteCampaign(id);
+      setCampaigns((prev) => prev.filter((c) => c.id !== id));
+    } catch (error) {
+      console.error('Error deleting campaign:', error);
+    }
   };
+
   return (
     <>
       <button

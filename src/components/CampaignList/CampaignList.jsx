@@ -7,7 +7,7 @@ function CampaignList({ campaigns, onEdit, onDelete }) {
         <p>No campaigns yet</p>
       ) : (
         campaigns.map((campaign) => (
-          <div key={campaign.id} className="campaign-card">
+          <div key={campaign.id}>
             <CampaignItem
               campaign={campaign}
               onEdit={onEdit}
