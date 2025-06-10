@@ -1,0 +1,49 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  color: #212529;
+  background-color: #f8f9fa;
+  margin: 12px;
+
+  @media only screen and (min-width: 768px) {
+    margin: 18px;
+  }
+  @media only screen and (min-width: 1280px) {
+    margin: 24px;
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+p {
+  font-size: 16px;
+}
+
+ul {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-left: 0;
+  list-style-type: none;
+}
+
+button {
+  cursor: pointer;
+  font-size: inherit;
+}
+
+input,
+select {
+  font-size: inherit;
+}

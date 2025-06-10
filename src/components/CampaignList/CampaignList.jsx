@@ -1,20 +1,22 @@
 import CampaignItem from '../CampaignItem/CampaignItem';
-
+import css from './CampaignList.module.scss'
 function CampaignList({ campaigns, onEdit, onDelete }) {
   return (
     <div>
       {campaigns.length === 0 ? (
         <p>No campaigns yet</p>
       ) : (
-        campaigns.map((campaign) => (
-          <div key={campaign.id}>
-            <CampaignItem
-              campaign={campaign}
-              onEdit={onEdit}
-              onDelete={onDelete}
-            />
-          </div>
-        ))
+        <ul className={css.list}>
+          {campaigns.map((campaign) => (
+            <li key={campaign.id}>
+              <CampaignItem
+                campaign={campaign}
+                onEdit={onEdit}
+                onDelete={onDelete}
+              />
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );

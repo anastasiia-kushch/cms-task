@@ -1,0 +1,16 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  @media only screen and (min-width: 768px) {
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(2, 350px);
+    justify-content: center;
+  }
+
+  @media only screen and (min-width: 1280px) {
+    grid-template-columns: repeat(2, 500px);
+  }
+}

@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
+import { X } from 'lucide-react';
+import toast from 'react-hot-toast';
 import TOWNS from '../../data/towns';
 import DEFAULT_KEYWORDS from '../../data/keywords';
+import css from './CampaignForm.module.scss';
 
 const MIN_BID = 0.1;
 
@@ -56,10 +59,15 @@ function CampaignForm({ initialData, onSubmit, onCancel }) {
 
     onSubmit({
       ...form,
+
       bid: parseFloat(form.bid),
       fund: parseFloat(form.fund),
       radius: parseInt(form.radius),
-      id: form.id || Date.now(),
+      id: form.id?.toString() || Date.now().toString(),
+    });
+    const message = initialData ? 'Campaign edited' : 'Campaign added';
+    toast.success(message, {
+      duration: 3000,
     });
   };
 
@@ -89,10 +97,10 @@ function CampaignForm({ initialData, onSubmit, onCancel }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="campaign-form">
-      <h2>{initialData ? 'Edit Campaign' : 'New Campaign'}</h2>
+    <form onSubmit={handleSubmit} className={css.form}>
+      <h2>{initialData ? 'Edit campaign' : 'New campaign'}</h2>
 
-      <label>
+      <label className={css.fieldContainer}>
         Campaign name:
         <input
           type="text"
@@ -100,10 +108,10 @@ function CampaignForm({ initialData, onSubmit, onCancel }) {
           value={form.name}
           onChange={handleChange}
         />
-        {errors.name && <span className="error">{errors.name}</span>}
+        {errors.name && <span className={css.error}>{errors.name}</span>}
       </label>
 
-      <label>
+      <label className={css.fieldContainer}>
         Keywords:
         <input
           list="keywords"
@@ -111,27 +119,33 @@ function CampaignForm({ initialData, onSubmit, onCancel }) {
           onChange={(e) => setKeywordInput(e.target.value)}
           onBlur={(e) => addKeyword(e.target.value)}
           onKeyDown={handleKeywordKeyDown}
-          placeholder="Add or select keyword"
+          placeholder="Select a keyword"
         />
         <datalist id="keywords">
           {DEFAULT_KEYWORDS.map((kw) => (
             <option key={kw} value={kw} />
           ))}
         </datalist>
-        <div className="keyword-list">
+        <ul className={css.kwList}>
           {form.keywords.map((kw) => (
-            <span key={kw} className="keyword-chip">
+            <li className={css.kwItem} key={kw}>
               {kw}
-              <button type="button" onClick={() => handleKeywordDelete(kw)}>
-                ×
+              <button
+                className={css.kwButton}
+                type="button"
+                onClick={() => handleKeywordDelete(kw)}
+              >
+                <X width={18} height={18} />
               </button>
-            </span>
+            </li>
           ))}
-        </div>
-        {errors.keywords && <span className="error">{errors.keywords}</span>}
+        </ul>
+        {errors.keywords && (
+          <span className={css.error}>{errors.keywords}</span>
+        )}
       </label>
 
-      <label>
+      <label className={css.fieldContainer}>
         Bid amount:
         <input
           type="number"
@@ -141,10 +155,10 @@ function CampaignForm({ initialData, onSubmit, onCancel }) {
           min={MIN_BID}
           onChange={handleChange}
         />
-        {errors.bid && <span className="error">{errors.bid}</span>}
+        {errors.bid && <span className={css.error}>{errors.bid}</span>}
       </label>
 
-      <label>
+      <label className={css.fieldContainer}>
         Campaign fund:
         <input
           type="number"
@@ -154,10 +168,10 @@ function CampaignForm({ initialData, onSubmit, onCancel }) {
           step="0.01"
           onChange={handleChange}
         />
-        {errors.fund && <span className="error">{errors.fund}</span>}
+        {errors.fund && <span className={css.error}>{errors.fund}</span>}
       </label>
 
-      <label>
+      <label className={css.fieldContainer}>
         Status:
         <select name="status" value={form.status} onChange={handleChange}>
           <option value="on">On</option>
@@ -165,20 +179,20 @@ function CampaignForm({ initialData, onSubmit, onCancel }) {
         </select>
       </label>
 
-      <label>
+      <label className={css.fieldContainer}>
         Town:
         <select name="town" value={form.town} onChange={handleChange}>
-          <option value="">-- Select Town --</option>
+          <option value="">-- Select town --</option>
           {TOWNS.map((town) => (
             <option key={town} value={town}>
               {town}
             </option>
           ))}
         </select>
-        {errors.town && <span className="error">{errors.town}</span>}
+        {errors.town && <span className={css.error}>{errors.town}</span>}
       </label>
 
-      <label>
+      <label className={css.fieldContainer}>
         Radius (km):
         <input
           type="number"
@@ -187,12 +201,14 @@ function CampaignForm({ initialData, onSubmit, onCancel }) {
           onChange={handleChange}
           min="1"
         />
-        {errors.radius && <span className="error">{errors.radius}</span>}
+        {errors.radius && <span className={css.error}>{errors.radius}</span>}
       </label>
 
-      <div className="form-buttons">
-        <button type="submit">Save</button>
-        <button type="button" onClick={onCancel}>
+      <div className={css.buttons}>
+        <button className={css.button} type="submit">
+          Save
+        </button>
+        <button className={css.button} type="button" onClick={onCancel}>
           Cancel
         </button>
       </div>

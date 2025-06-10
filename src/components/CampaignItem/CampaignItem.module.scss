@@ -1,0 +1,44 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid black;
+  border-radius: 8px;
+  padding: 12px;
+
+  > *:first-child {
+    margin-bottom: 12px;
+  }
+  > *:last-child {
+    margin-top: 12px;
+  }
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+}
+
+.group {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.buttons {
+  margin-top: 16px;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.button {
+  border: 1px solid black;
+  border-radius: 8px;
+  padding: 8px;
+  font-weight: 800;
+  background-color: #f8f9fa;
+}

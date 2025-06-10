@@ -1,15 +1,41 @@
+import css from './CampaignItem.module.scss';
+
 function CampaignItem({ campaign, onEdit, onDelete }) {
   return (
-    <div>
-      <h3>{campaign.name}</h3>
-      <p>Bid: {campaign.bid}</p>
-      <p>Fund: {campaign.fund}</p>
-      <p>Town: {campaign.town}</p>
-      <p>Radius: {campaign.radius}km</p>
-      <p>Status: {campaign.status}</p>
-      <p>Keywords: {campaign.keywords.join(', ')}</p>
-      <button onClick={() => onEdit(campaign)}>Edit</button>
-      <button onClick={() => onDelete(campaign.id)}>Delete</button>
+    <div className={css.container}>
+      <h2>{campaign.name}</h2>
+      <div className={css.info}>
+        <div className={css.group}>
+          <p>
+            <strong>Bid:</strong> {campaign.bid}
+          </p>
+          <p>
+            <strong>Fund:</strong> {campaign.fund}
+          </p>
+        </div>
+        <div className={css.group}>
+          <p>
+            <strong>Town:</strong> {campaign.town}
+          </p>
+          <p>
+            <strong>Radius:</strong> {campaign.radius}km
+          </p>
+        </div>
+        <p>
+          <strong>Status:</strong> {campaign.status}
+        </p>
+        <p>
+          <strong>Keywords:</strong> {campaign.keywords.join(', ')}
+        </p>
+      </div>
+      <div className={css.buttons}>
+        <button className={css.button} onClick={() => onEdit(campaign)}>
+          Edit
+        </button>
+        <button className={css.button} onClick={() => onDelete(campaign.id)}>
+          Delete
+        </button>
+      </div>
     </div>
   );
 }

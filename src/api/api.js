@@ -18,7 +18,7 @@ export async function addCampaign(newCampaign) {
 
 export async function updateCampaign(updatedCampaign) {
   const res = await fetch(`${API_URL}/${updatedCampaign.id}`, {
-    method: 'PUT',
+    method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(updatedCampaign),
   });
@@ -27,13 +27,8 @@ export async function updateCampaign(updatedCampaign) {
 }
 
 export async function deleteCampaign(id) {
-  try {
-    const res = await fetch(`${API_URL}/${id}`, {
-      method: 'DELETE',
-    });
-    if (!res.ok) throw new Error('Failed to delete campaign');
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) throw new Error('Failed to delete campaign');
 }

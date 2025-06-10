@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
 import CampaignForm from './components/CampaignForm/CampaignForm';
 import CampaignList from './components/CampaignList/CampaignList';
+import Modal from './components/Modal/Modal';
 import {
   getCampaigns,
   addCampaign,
   updateCampaign,
   deleteCampaign,
 } from './api/api';
+import css from './App.module.scss';
+import toast, { Toaster } from 'react-hot-toast';
 
 function App() {
   const [campaigns, setCampaigns] = useState([]);
@@ -19,7 +22,7 @@ function App() {
         const data = await getCampaigns();
         setCampaigns(data);
       } catch (error) {
-        console.error('Error fetching campaigns:', error);
+        toast.error(error);
       }
     };
     fetchCampaigns();
@@ -35,7 +38,7 @@ function App() {
       const created = await addCampaign(newCampaign);
       setCampaigns([...campaigns, created]);
     } catch (error) {
-      console.error('Error adding campaign:', error);
+      toast.error(error);
     }
   };
 
@@ -46,7 +49,7 @@ function App() {
         prev.map((c) => (c.id === result.id ? result : c))
       );
     } catch (error) {
-      console.error('Error updating campaign:', error);
+      toast.error(error);
     }
   };
 
@@ -54,39 +57,55 @@ function App() {
     try {
       await deleteCampaign(id);
       setCampaigns((prev) => prev.filter((c) => c.id !== id));
+      toast.success('Campaign deleted', {
+        duration: 3000,
+        icon: '🗑️',
+      });
     } catch (error) {
-      console.error('Error deleting campaign:', error);
+      console.error(error);
     }
   };
 
   return (
-    <>
-      <button
-        onClick={() => {
-          setEditingCampaign(null);
-          setShowForm(true);
-        }}
-      >
-        Add campaign
-      </button>
+    <div className={css.container}>
+      <Toaster />
+      <div className={css.header}>
+        <h1>Your campaigns</h1>
+        <button
+          className={css.addBtn}
+          onClick={() => {
+            setEditingCampaign(null);
+            setShowForm(true);
+          }}
+        >
+          Add
+        </button>
+      </div>
 
       {showForm && (
-        <CampaignForm
-          initialData={editingCampaign}
-          onSubmit={(data) => {
-            if (editingCampaign) {
-              handleUpdateCampaign(data);
-            } else {
-              handleAddCampaign(data);
-            }
+        <Modal
+          onClose={() => {
             setShowForm(false);
             setEditingCampaign(null);
           }}
-          onCancel={() => {
-            setShowForm(false);
-            setEditingCampaign(null);
-          }}
-        />
+        >
+          <CampaignForm
+            initialData={editingCampaign}
+            onSubmit={(data) => {
+              if (editingCampaign) {
+                handleUpdateCampaign(data);
+              } else {
+                handleAddCampaign(data);
+              }
+              setShowForm(false);
+              setEditingCampaign(null);
+            }}
+            onCancel={() => {
+              setShowForm(false);
+              setEditingCampaign(null);
+            }}
+          />
+        </Modal>
       )}
 
       <CampaignList
@@ -94,7 +113,7 @@ function App() {
         onEdit={handleEditClick}
         onDelete={handleDeleteCampaign}
       />
-    </>
+    </div>
   );
 }
 
