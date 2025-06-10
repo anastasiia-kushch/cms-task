@@ -1,10 +1,3 @@
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
 .container {
   margin-left: auto;
   margin-right: auto;
@@ -13,6 +6,25 @@
     min-width: 500px;
     width: max-content;
   }
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.balance {
+  margin-left: auto;
+  font-size: 18px;
+  margin-bottom: 24px;
+}
+
+.panelHeader {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
 }
 
 .addBtn {

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
-import toast from 'react-hot-toast';
 import TOWNS from '../../data/towns';
 import DEFAULT_KEYWORDS from '../../data/keywords';
 import css from './CampaignForm.module.scss';
@@ -64,10 +63,6 @@ function CampaignForm({ initialData, onSubmit, onCancel }) {
       fund: parseFloat(form.fund),
       radius: parseInt(form.radius),
       id: form.id?.toString() || Date.now().toString(),
-    });
-    const message = initialData ? 'Campaign edited' : 'Campaign added';
-    toast.success(message, {
-      duration: 3000,
     });
   };
 

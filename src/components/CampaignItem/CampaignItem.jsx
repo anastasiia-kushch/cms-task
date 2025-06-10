@@ -3,7 +3,7 @@ import css from './CampaignItem.module.scss';
 function CampaignItem({ campaign, onEdit, onDelete }) {
   return (
     <div className={css.container}>
-      <h2>{campaign.name}</h2>
+      <h3>{campaign.name}</h3>
       <div className={css.info}>
         <div className={css.group}>
           <p>

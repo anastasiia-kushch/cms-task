@@ -15,6 +15,16 @@ function App() {
   const [campaigns, setCampaigns] = useState([]);
   const [editingCampaign, setEditingCampaign] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [emeraldBalance, setEmeraldBalance] = useState(() => {
+    const stored = localStorage.getItem('emeraldBalance');
+    return stored ? Number(stored) : 1000;
+  });
+  const [isEditingBalance, setIsEditingBalance] = useState(false);
+  const [tempBalance, setTempBalance] = useState(emeraldBalance);
+
+  useEffect(() => {
+    localStorage.setItem('emeraldBalance', emeraldBalance);
+  }, [emeraldBalance]);
 
   useEffect(() => {
     const fetchCampaigns = async () => {
@@ -34,9 +44,15 @@ function App() {
   };
 
   const handleAddCampaign = async (newCampaign) => {
+    if (Number(newCampaign.fund) > emeraldBalance) {
+      toast.error('Not enough funds in Emerald account!');
+      return;
+    }
     try {
       const created = await addCampaign(newCampaign);
       setCampaigns([...campaigns, created]);
+      setEmeraldBalance((prev) => prev - newCampaign.fund);
+      toast.success('Campaign added');
     } catch (error) {
       toast.error(error);
     }
@@ -48,6 +64,7 @@ function App() {
       setCampaigns((prev) =>
         prev.map((c) => (c.id === result.id ? result : c))
       );
+      toast.success('Campaign edited');
     } catch (error) {
       toast.error(error);
     }
@@ -62,7 +79,31 @@ function App() {
         icon: '🗑️',
       });
     } catch (error) {
-      console.error(error);
+      toast.error(error);
+    }
+  };
+
+  const handleBalanceChange = (e) => {
+    setTempBalance(e.target.value);
+  };
+
+  const saveBalance = () => {
+    const parsed = Number(tempBalance);
+    if (!isNaN(parsed) && parsed >= 0) {
+      setEmeraldBalance(parsed);
+      localStorage.setItem('emeraldBalance', parsed);
+    } else {
+      toast.error('Enter a valid number');
+    }
+    setIsEditingBalance(false);
+  };
+
+  const handleBalanceKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      saveBalance();
+    } else if (e.key === 'Escape') {
+      setIsEditingBalance(false);
+      setTempBalance(emeraldBalance);
     }
   };
 
@@ -70,16 +111,38 @@ function App() {
     <div className={css.container}>
       <Toaster />
       <div className={css.header}>
-        <h1>Your campaigns</h1>
-        <button
-          className={css.addBtn}
-          onClick={() => {
-            setEditingCampaign(null);
-            setShowForm(true);
-          }}
+        <div
+          className={css.balance}
+          onDoubleClick={() => setIsEditingBalance(true)}
         >
-          Add
-        </button>
+          {isEditingBalance ? (
+            <input
+              type="number"
+              value={tempBalance}
+              onChange={handleBalanceChange}
+              onBlur={saveBalance}
+              onKeyDown={handleBalanceKeyDown}
+              autoFocus
+              className={css.balanceInput}
+            />
+          ) : (
+            <h2>Emerald balance: ${emeraldBalance}</h2>
+          )}
+        </div>
+
+        <div className={css.panelHeader}>
+          <h1>Your campaigns</h1>
+
+          <button
+            className={css.addBtn}
+            onClick={() => {
+              setEditingCampaign(null);
+              setShowForm(true);
+            }}
+          >
+            Add
+          </button>
+        </div>
       </div>
 
       {showForm && (
